@@ -43,5 +43,7 @@ OptionMenu "PBOverhaul"
 	StaticText "Weapon Overrides", gold
 	Slider "Hell's Bells mag size (without chamber)", "pb_overhaul_hellsbells_mag", 7, 20, 1, 7
 	StaticText "Total capacity = mag + 1", darkgray
+	StaticText " "
+	Slider "Rocket Launcher ammo given", "pb_overhaul_rocketlauncher_give", 6, 20, 1, 20
 }
 //////////////////////////////////////////////////////////////////////////////////////

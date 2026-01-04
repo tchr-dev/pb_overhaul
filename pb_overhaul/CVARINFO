@@ -1,1 +1,2 @@
 user int pb_overhaul_hellsbells_mag = 7;
+user int pb_overhaul_rocketlauncher_give = 20;
