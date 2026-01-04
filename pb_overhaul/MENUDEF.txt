@@ -1,0 +1,43 @@
+AddOptionMenu "OptionsMenu"
+{
+	Submenu "Project Brutality Overhaul", "PBOverhaul"
+}
+AddOptionMenu "OptionsMenuSimple"
+{
+	Submenu "Project Brutality Overhaul", "PBOverhaul"
+}
+//////////////////////////////////////////////////////////////////////////////////////
+// Override to place the Overhaul entry right after Gearbox Options.
+OptionMenu "PBSettings"
+{
+	Title "Project Brutality Settings"
+	StaticText " "
+	StaticText " "
+	Submenu "Spawn Settings",		"GlobalSettings"
+	StaticText " "
+	Submenu "Gameplay Settings",		"GameplaySettings"
+	StaticText " "
+	Submenu "Visual Settings",		"RenderingSettings"
+	StaticText " "
+	Submenu "HUD Settings",			"PB_HUDOptions"
+	statictext ""
+	Submenu "$GB_OPTIONS","gb_Options"
+	StaticText " "
+	Submenu "Project Brutality Overhaul", "PBOverhaul"
+	StaticText " "
+	StaticText " "
+	StaticText " "
+	Command "Go to Test Map", "map PBTEST"
+	StaticText " "
+	StaticText "$PB_VERSION_INFO"
+}
+//////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////
+OptionMenu "PBOverhaul"
+{
+	Title "Project Brutality Overhaul"
+	StaticText " "
+	StaticText "Work In Progress"
+}
+//////////////////////////////////////////////////////////////////////////////////////
