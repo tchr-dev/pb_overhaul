@@ -39,5 +39,9 @@ OptionMenu "PBOverhaul"
 	Title "Project Brutality Overhaul"
 	StaticText " "
 	StaticText "Work In Progress"
+	StaticText " "
+	StaticText "Weapon Overrides", gold
+	Slider "Deagle mag size (without chamber)", "pb_overhaul_deagle_mag", 1, 7, 1, 7
+	StaticText "Total capacity = mag + 1", darkgray
 }
 //////////////////////////////////////////////////////////////////////////////////////
