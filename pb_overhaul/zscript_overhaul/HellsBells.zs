@@ -1,20 +1,22 @@
-class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
+class PB_HellsBells : PB_WeaponBase
 {
 	default
 	{
 		weapon.slotnumber 2;
 		weapon.ammotype1 "PB_LowCalMag";
-		weapon.ammogive1 8;	
-		weapon.ammotype2 "DeagleAmmo";
+		weapon.ammogive1 20;	
+		weapon.ammotype2 "HellsBellsAmmo";
+		weapon.ammogive2 20;
 		weapon.slotpriority 1;
-		PB_WeaponBase.ReserveToMagAmmoFactor 2;
-		PB_WeaponBase.AmmoTypeLeft "LeftDeagleAmmo";
+		PB_WeaponBase.ReserveToMagAmmoFactor 1;
+		PB_WeaponBase.AmmoTypeLeft "LeftHellsBellsAmmo";
 		Inventory.MaxAmount 2;
+		Inventory.Amount 1;
 		PB_WeaponBase.unloadertoken "DeagleHasUnloaded";
 		PB_WeaponBase.respectItem "RespectDeagle";
 		PB_WeaponBase.DualWieldToken "DualWieldingDeagles";	
 		Inventory.PickupSound "weapons/deagle/equip";
-		inventory.pickupmessage "UAC-H54 Martian Raptor .50 (Slot 2, Upgrade)";
+		inventory.pickupmessage "UAC-H54 Martian Raptor .50 - Hell's Bells (Slot 2, Upgrade)";
 		Obituary "%o was popped by %k's .50 Caliber Hand Cannon.";
 		Inventory.AltHUDIcon "D4E0Z0";
 		PB_WeaponBase.TailPitch 0.6;
@@ -22,16 +24,16 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 		+weapon.noalert;
 		+weapon.noautofire;
 		Scale 0.48;
-		Tag "UAC-H54 Martian Raptor .50";
+		Tag "UAC-H54 Martian Raptor .50 - Hell's Bells";
 		FloatBobStrength 0.5;
 	}
 
-	action int PB_Overhaul_DeagleMagSize()
+	action int PB_HellsBellsMagSize()
 	{
 		let p = player;
 		if (p == null)
 			return 7;
-		let cv = Cvar.GetCvar("pb_overhaul_deagle_mag", p);
+		let cv = Cvar.GetCvar("pb_overhaul_hellsbells_mag", p);
 		if (cv == null)
 			return 7;
 		int mag = cv.GetInt();
@@ -42,9 +44,9 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 		return mag;
 	}
 
-	action int PB_Overhaul_DeagleFull()
+	action int PB_HellsBellsFull()
 	{
-		return PB_Overhaul_DeagleMagSize() + 1;
+		return PB_HellsBellsMagSize() + 1;
 	}
 	
 	states
@@ -113,6 +115,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			TNT1 A 0 A_WeaponOffset(0,32);
 			TNT1 A 0 PB_HandleCrosshair(42);
 		Ready3:
+			TNT1 A 0 A_JumpIf(JustPressed(BT_RELOAD), "Reload");
 			TNT1 A 0 A_JumpIf(A_CheckAkimbo(), "ReadyDualWield");
 			TNT1 A 0 A_jumpif(invoker.ammo2.amount < 1,"ReadyUnloaded");
 			D4E0 E 1 {
@@ -122,6 +125,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			loop;
 		ReadyUnloaded:
 		Ready4:	//man i hate this
+			TNT1 A 0 A_JumpIf(JustPressed(BT_RELOAD), "Reload");
 			TNT1 A 0 A_JumpIf(A_CheckAkimbo(), "ReadyDualWield");
 			TNT1 A 0 A_jumpif(invoker.ammo2.amount > 0,"Ready3");
 			D1E0 A 1 {
@@ -156,7 +160,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
                     PB_MuzzleFlashEffects(0,5,5);
 					A_FireProjectile("YellowFlareSpawn",0,0,0,0);
 					PB_SpawnCasing("EmptyBrassDeagle",30,0,31,-frandom(1, 2),Frandom(2,6),Frandom(3,6));
-					A_Takeinventory("DeagleAmmo",1);
+					A_Takeinventory("HellsBellsAmmo",1);
 					A_ZoomFactor(0.96);
 					PB_WeaponRecoil(-1.15,-0.36);	//-1.15, -0.26
 				}
@@ -202,8 +206,8 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				A_ClearOverlays(10,11);
 				}
 			TNT1 A 0 A_jumpif(A_CheckAkimbo(),"StopDualWield");
-			TNT1 A 0 A_JumpIfInventory(invoker.getclassname(), 2,"SwitchToDualWield");
-			TNT1 A 0 A_Print("You need two Deagles to dual wield!");
+			TNT1 A 0 A_JumpIfInventory("PB_HellsBells", 2,"SwitchToDualWield");
+			TNT1 A 0 A_Print("You need two Hell's Bells to dual wield!");
 			Goto Ready3;
 		SwitchToDualWield:
 			TNT1 A 0 A_SetInventory("CantDoAction", 1);
@@ -270,7 +274,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			}
 			TNT1 A 0 PB_jumpIfHasBarrel("IdleBarrel","IdleFlameBarrel","IdleIceBarrel");
 			TNT1 A 0 A_JumpIf(A_CheckAkimbo(), "ReloadDualWield");
-			TNT1 A 0 PB_checkReload("EmptyReload","Ready","NoAmmo",PB_Overhaul_DeagleFull(),2);
+			TNT1 A 0 PB_checkReload("EmptyReload","Ready","NoAmmo",PB_HellsBellsFull(),1);
 			TNT1 A 0 {
 				A_setinventory(invoker.UnloaderToken,0);
 				A_ZoomFactor(1.0);
@@ -293,7 +297,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			D0E0 X 1 A_weaponoffset(-0.75,0.75,WOF_ADD);
 			D0E0 X 1 A_weaponoffset(-0.2,0.2,WOF_ADD);
 			D0E0 Y 1 A_weaponoffset(1.525,-1.125,WOF_ADD);
-			TNT1 A 0 PB_AmmoIntoMag("DeagleAmmo","PB_LowCalMag",PB_Overhaul_DeagleFull(),2);
+			TNT1 A 0 PB_AmmoIntoMag("HellsBellsAmmo","PB_LowCalMag",PB_HellsBellsFull(),1);
 			TNT1 A 0 A_SetInventory("DeagleHasUnloaded",0);
 			TNT1 A 0 A_Startsound("weapons/deagle/magin",11,CHANF_OVERLAP);
 			D0E0 Z 1 A_weaponoffset(1.725,-1.325,WOF_ADD);
@@ -330,7 +334,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			D1E1 EFG 1;
 			TNT1 A 0 A_Startsound("weapons/deagle/magin",0,CHANF_OVERLAP);
 			TNT1 A 0 A_setinventory(invoker.UnloaderToken,0);
-			TNT1 A 0 PB_AmmoIntoMag("DeagleAmmo","PB_LowCalMag",PB_Overhaul_DeagleMagSize(),2);
+			TNT1 A 0 PB_AmmoIntoMag("HellsBellsAmmo","PB_LowCalMag",PB_HellsBellsMagSize(),1);
 			D1E1 HIJKLMNOPQ 1;
 			TNT1 A 0 A_Startsound("weapons/deagle/RotateFol",0,CHANF_OVERLAP);
 			D1E1 RSTUVWXYZ 1;
@@ -354,12 +358,12 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			TNT1 A 0 {
 				int am1 = countinv(invoker.ammotype1);
 				int am2 = countinv(invoker.ammotype2);
-				int tr = countinv("LeftDeagleAmmo");
+				int tr = countinv("LeftHellsBellsAmmo");
 				
 				if(am1 < 2)
 					return resolvestate("NoAmmoDual");	// some futureproofing
 				
-				if(tr >= PB_Overhaul_DeagleFull() && am2 >= PB_Overhaul_DeagleFull())
+				if(tr >= PB_HellsBellsFull() && am2 >= PB_HellsBellsFull())
 					return resolvestate("Ready");
 				
 				//A_setinventory(invoker.UnloaderToken,0);
@@ -367,11 +371,11 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				return resolvestate(null);
 			}
 			TNT1 A 0 A_ClearOverlays(10,11);
-			TNT1 A 0 A_jumpif(countinv("LeftDeagleAmmo") < 1 || countinv(invoker.ammotype2) < 1,"EmptyDualReload");
+			TNT1 A 0 A_jumpif(countinv("LeftHellsBellsAmmo") < 1 || countinv(invoker.ammotype2) < 1,"EmptyDualReload");
 			DR30 ABCDE 1;
 			TNT1 A 0 A_Startsound("Ironsights", 23,CHANF_OVERLAP);
 			DR30 FGHIJ 1;
-			TNT1 A 0 A_jumpif(countinv(invoker.ammotype2) >= PB_Overhaul_DeagleFull(),"OnlyReloadLeft");
+			TNT1 A 0 A_jumpif(countinv(invoker.ammotype2) >= PB_HellsBellsFull(),"OnlyReloadLeft");
 			
 		//partial but both
 			DR34 ABCDE 1;
@@ -383,13 +387,13 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 		PartialReloadRight:
 			//right
 			DR32 ABCDE 1;
-			TNT1 A 0 PB_AmmoIntoMag("DeagleAmmo","PB_LowCalMag",PB_Overhaul_DeagleFull(),2);
+			TNT1 A 0 PB_AmmoIntoMag("HellsBellsAmmo","PB_LowCalMag",PB_HellsBellsFull(),1);
 			TNT1 A 0 A_Startsound("weapons/deagle/magin",21,CHANF_OVERLAP);
 			DR32 FGHIJ 1;
 			TNT1 A 0 A_Startsound("weapons/deagle/SwapF",29,CHANF_OVERLAP);
 			DR32 KLMNO 1;
 			TNT1 A 1;
-			TNT1 A 0 A_jumpif(countinv("LeftDeagleAmmo") < PB_Overhaul_DeagleFull() && countinv(invoker.ammotype1) > 1,"ToPartialLeft");
+			TNT1 A 0 A_jumpif(countinv("LeftHellsBellsAmmo") < PB_HellsBellsFull() && countinv(invoker.ammotype1) > 1,"ToPartialLeft");
 			goto FinishDualReload;
 			
 		ToPartialLeft:
@@ -398,7 +402,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 		PartialReloadLeft:
 			//left
 			DR31 ABCDE 1;
-			TNT1 A 0 PB_AmmoIntoMag("LeftDeagleAmmo","PB_LowCalMag",PB_Overhaul_DeagleFull(),2);
+			TNT1 A 0 PB_AmmoIntoMag("LeftHellsBellsAmmo","PB_LowCalMag",PB_HellsBellsFull(),1);
 			TNT1 A 0 A_setinventory(invoker.UnloaderToken,0);
 			TNT1 A 0 A_Startsound("weapons/deagle/magin",22,CHANF_OVERLAP);
 			DR31 FGHIJ 1;
@@ -418,7 +422,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			TNT1 A 0 A_Startsound("weapons/deagle/SwapF",29,CHANF_OVERLAP);
 			DR33 GHIJKL 1;
 			DR31 ABCDE 1;
-			TNT1 A 0 PB_AmmoIntoMag("LeftDeagleAmmo","PB_LowCalMag",PB_Overhaul_DeagleFull(),2);
+			TNT1 A 0 PB_AmmoIntoMag("LeftHellsBellsAmmo","PB_LowCalMag",PB_HellsBellsFull(),1);
 			TNT1 A 0 A_setinventory(invoker.UnloaderToken,0);
 			TNT1 A 0 A_Startsound("weapons/deagle/magin",14,CHANF_OVERLAP);
 			DR31 FGHIJ 1;
@@ -436,7 +440,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 		PartialReloadRightFromLeft:
 			//right
 			DR32 ABCDE 1;
-			TNT1 A 0 PB_AmmoIntoMag("DeagleAmmo","PB_LowCalMag",PB_Overhaul_DeagleFull(),2);
+			TNT1 A 0 PB_AmmoIntoMag("HellsBellsAmmo","PB_LowCalMag",PB_HellsBellsFull(),1);
 			TNT1 A 0 A_setinventory(invoker.UnloaderToken,0);
 			TNT1 A 0 A_Startsound("weapons/deagle/magin",16,CHANF_OVERLAP);
 			DR32 FGHIJ 1;
@@ -447,7 +451,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			
 		EmptyDualReload:
 			TNT1 A 0 {
-				int lda = countinv("LeftDeagleAmmo");
+				int lda = countinv("LeftHellsBellsAmmo");
 				int rda = countinv(invoker.ammotype2);
 				if((lda <= 0 && (rda <= 0 || findinventory(invoker.unloadertoken)) )) //|| findinventory(invoker.unloadertoken))
 					return resolvestate(null);
@@ -478,7 +482,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			DR00 QRSTUV 1;
 			//Insert Right w/left empty
 			DR01 ABCDE 1;
-			TNT1 A 0 PB_AmmoIntoMag("DeagleAmmo","PB_LowCalMag",PB_Overhaul_DeagleMagSize(),2);
+			TNT1 A 0 PB_AmmoIntoMag("HellsBellsAmmo","PB_LowCalMag",PB_HellsBellsMagSize(),1);
 			TNT1 A 0 A_setinventory(invoker.UnloaderToken,0);
 			TNT1 A 0 A_Startsound("weapons/deagle/magin",16,CHANF_OVERLAP);
 			DR01 FGHIJ 1;
@@ -494,13 +498,13 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			TNT1 A 0 A_Startsound("weapons/deagle/SwapF",29,CHANF_OVERLAP);
 			DR02 LMNOP 1;
 			TNT1 A 1;
-			TNT1 A 0 A_jumpif(countinv("LeftDeagleAmmo") >= PB_Overhaul_DeagleFull() || countinv(invoker.ammotype1) < 2,"FinishDualReload");
+			TNT1 A 0 A_jumpif(countinv("LeftHellsBellsAmmo") >= PB_HellsBellsFull() || countinv(invoker.ammotype1) < 2,"FinishDualReload");
 			
 			//raise left w/right reloaded
 			DR24 ABCD 1;
 			//insert left w/right reloaded
 			DR11 ABCDE 1;
-			TNT1 A 0 PB_AmmoIntoMag("LeftDeagleAmmo","PB_LowCalMag",PB_Overhaul_DeagleMagSize(),2);
+			TNT1 A 0 PB_AmmoIntoMag("LeftHellsBellsAmmo","PB_LowCalMag",PB_HellsBellsMagSize(),1);
 			TNT1 A 0 A_setinventory(invoker.UnloaderToken,0);
 			TNT1 A 0 A_Startsound("weapons/deagle/magin",19,CHANF_OVERLAP);
 			DR11 FGHIJ 1;
@@ -540,7 +544,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			
 			//insert left w/right reloaded
 			DR11 ABCDE 1;
-			TNT1 A 0 PB_AmmoIntoMag("LeftDeagleAmmo","PB_LowCalMag",PB_Overhaul_DeagleMagSize(),2);
+			TNT1 A 0 PB_AmmoIntoMag("LeftHellsBellsAmmo","PB_LowCalMag",PB_HellsBellsMagSize(),1);
 			TNT1 A 0 A_setinventory(invoker.UnloaderToken,0);
 			TNT1 A 0 A_Startsound("weapons/deagle/magin",16,CHANF_OVERLAP);
 			DR11 FGHIJ 1;
@@ -557,7 +561,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			TNT1 A 0 A_Startsound("weapons/deagle/SwapF",29,CHANF_OVERLAP);
 			DR12 LMNOP 1;
 			TNT1 A 1;
-			TNT1 A 0 A_jumpif(countinv("DeagleAmmo") >= PB_Overhaul_DeagleFull() || countinv(invoker.ammotype1) < 2,"FinishDualReload");
+			TNT1 A 0 A_jumpif(countinv("HellsBellsAmmo") >= PB_HellsBellsFull() || countinv(invoker.ammotype1) < 2,"FinishDualReload");
 			goto ToPartialRight;
 			//DR36 ABCD 1;
 			
@@ -579,7 +583,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			
 			//insert right w/left reloaded
 			DR21 ABCDE 1;
-			TNT1 A 0 PB_AmmoIntoMag("DeagleAmmo","PB_LowCalMag",PB_Overhaul_DeagleMagSize(),2);
+			TNT1 A 0 PB_AmmoIntoMag("HellsBellsAmmo","PB_LowCalMag",PB_HellsBellsMagSize(),1);
 			TNT1 A 0 A_setinventory(invoker.UnloaderToken,0);
 			TNT1 A 0 A_Startsound("weapons/deagle/magin",19,CHANF_OVERLAP);
 			DR21 FGHIJ 1;
@@ -596,7 +600,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			TNT1 A 0 A_Startsound("weapons/deagle/SwapF",29,CHANF_OVERLAP);
 			DR22 LMNOP 1;
 			TNT1 A 1;
-			TNT1 A 0 A_jumpif(countinv("LeftDeagleAmmo") >= PB_Overhaul_DeagleFull() || countinv(invoker.ammotype1) < 2,"FinishDualReload");
+			TNT1 A 0 A_jumpif(countinv("LeftHellsBellsAmmo") >= PB_HellsBellsFull() || countinv(invoker.ammotype1) < 2,"FinishDualReload");
 			goto ToPartialLeft;
 		
 		FinishDualReload:
@@ -613,7 +617,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			D2E1 ABCD 1;
 			TNT1 A 0 A_Startsound("weapons/deagle/magout",16,CHANF_OVERLAP);
 			TNT1 A 0 A_Startsound("PSRLOUT",24,CHANF_OVERLAP);
-			TNT1 A 0 PB_UnloadMag("DeagleAmmo","PB_LowCalMag",2);
+			TNT1 A 0 PB_UnloadMag("HellsBellsAmmo","PB_LowCalMag",1);
 			TNT1 A 0 A_giveinventory(invoker.UnloaderToken,1);
 			D2E1 E 1;
 			TNT1 A 0 A_Startsound("weapons/deagle/click2",22,CHANF_OVERLAP);
@@ -622,16 +626,16 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			goto ready3;
 		
 		DualUnload:
-			//TNT1 A 0 A_Jumpif(countinv(invoker.UnloaderToken) > 0 || (countinv(invoker.ammotype2) < 1 && countinv("LeftDeagleAmmo") < 1),"Ready3");
-			TNT1 A 0 A_Jumpif((countinv(invoker.ammotype2) < 1 && countinv("LeftDeagleAmmo") < 1),"Ready3");
+			//TNT1 A 0 A_Jumpif(countinv(invoker.UnloaderToken) > 0 || (countinv(invoker.ammotype2) < 1 && countinv("LeftHellsBellsAmmo") < 1),"Ready3");
+			TNT1 A 0 A_Jumpif((countinv(invoker.ammotype2) < 1 && countinv("LeftHellsBellsAmmo") < 1),"Ready3");
 			DR30 ABCDEFGHIJ 1 PB_SetDualSpriteIfUnload("DR10","DR20","DR00");
 			DR34 ABCDE 1;
 			TNT1 A 0 A_Startsound("weapons/deagle/magout",21,CHANF_OVERLAP);
 			TNT1 A 0 A_Startsound("PSRLOUT",24,CHANF_OVERLAP);
 			DR34 F 1;
 			TNT1 A 0 A_Startsound("weapons/deagle/click2",19,CHANF_OVERLAP);
-			TNT1 A 0 PB_UnloadMag("DeagleAmmo","PB_LowCalMag",2);
-			TNT1 A 0 PB_UnloadMag("LeftDeagleAmmo","PB_LowCalMag",2);
+			TNT1 A 0 PB_UnloadMag("HellsBellsAmmo","PB_LowCalMag",1);
+			TNT1 A 0 PB_UnloadMag("LeftHellsBellsAmmo","PB_LowCalMag",1);
 			TNT1 A 0 A_giveinventory(invoker.UnloaderToken,1);
 			//DR00 H 1;
 			DR00 GFEDCBA 1;
@@ -717,7 +721,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 					PB_IncrementHeat(2);
 					A_FireProjectile("YellowFlareSpawn",0,0,0,0);
 					PB_SpawnCasing("EmptyBrassDeagle",26,0,38,-frandom(1, 2),Frandom(2,6),Frandom(3,6));
-					A_Takeinventory("DeagleAmmo",1);
+					A_Takeinventory("HellsBellsAmmo",1);
 					A_ZoomFactor(1.19);
 					PB_WeaponRecoil(-0.90,-0.25);
 				}
@@ -758,7 +762,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			TNT1 A 1;
 			DR37 ABC 1 {
 				bool rg = invoker.ammo2.amount < 1;
-				bool lg = countinv("LeftDeagleAmmo") < 1;
+				bool lg = countinv("LeftHellsBellsAmmo") < 1;
 				if(rg && lg)
 					A_SetOverlaySprite(overlayID(),"DR03");
 				else if(rg)
@@ -771,7 +775,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 		DeselectAnimationDualWield:
 			DR37 CBA 1 {
 				bool rg = invoker.ammo2.amount < 1;
-				bool lg = countinv("LeftDeagleAmmo") < 1;
+				bool lg = countinv("LeftHellsBellsAmmo") < 1;
 				if(rg && lg)
 					A_SetOverlaySprite(overlayID(),"DR03");
 				else if(rg)
@@ -797,9 +801,9 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			TNT1 A 1 {
 				if(CountInv("PB_LowCalMag")>0)
 				{
-					if(CountInv("LeftDeagleAmmo")<=0 || CountInv("DeagleAmmo")<=0)
+					if(CountInv("LeftHellsBellsAmmo")<=0 || CountInv("HellsBellsAmmo")<=0)
 					{
-						if(CountInv("LeftDeagleAmmo")<=0 && CountInv("DeagleAmmo")<=0)
+						if(CountInv("LeftHellsBellsAmmo")<=0 && CountInv("HellsBellsAmmo")<=0)
 							A_SetInventory("DualFireReload",2);
 						else
 							A_SetInventory("DualFireReload",1);
@@ -816,15 +820,15 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 		IdleLeft_Overlay:
 			D6E1 I 1 {
 				PB_CoolDownBarrel(15, 0, 6);
-				if(countinv("LeftDeagleAmmo") < 1)
+				if(countinv("LeftHellsBellsAmmo") < 1)
 					A_SetWeaponFrame(9);	//A0B1C2D3E4F5G6H7I8J9
 					
-				if(CountInv("LeftDeagleAmmo")<=0 && CountInv("DeagleAmmo")>0)
+				if(CountInv("LeftHellsBellsAmmo")<=0 && CountInv("HellsBellsAmmo")>0)
 					A_GiveInventory("DualFiring",1);
 				int firemodecvar = Cvar.GetCvar("SingleDualFire",player).GetInt();
 				if((PressingAltFire() || JustPressed(BT_ALTATTACK)) && !A_IsFiringLeftWeapon() && firemodecvar == 2)
 				{
-						if(CountInv("LeftDeagleAmmo") > 0)
+						if(CountInv("LeftHellsBellsAmmo") > 0)
 							return resolvestate("FireLeft_Overlay");
 						else 
 						{
@@ -832,11 +836,11 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 							return resolvestate(null);
 						}
 				}
-				if(CountInv("DualFiring")==0 || (CountInv("DualFiring")==0 && CountInv("DeagleAmmo")<=0) || firemodecvar == 1)
+				if(CountInv("DualFiring")==0 || (CountInv("DualFiring")==0 && CountInv("HellsBellsAmmo")<=0) || firemodecvar == 1)
 				{
 					if((PressingFire() || JustPressed(BT_ATTACK)) && !A_IsFiringLeftWeapon() && firemodecvar < 2)
 					{
-						if(CountInv("LeftDeagleAmmo") > 0)
+						if(CountInv("LeftHellsBellsAmmo") > 0)
 							return resolvestate("FireLeft_Overlay");
 						else 
 						{
@@ -852,17 +856,17 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 		IdleRight_Overlay:
 			D6E0 I 1 {
 				PB_CoolDownBarrel(-15, 0, 6);
-				if(countinv("DeagleAmmo") < 1)
+				if(countinv("HellsBellsAmmo") < 1)
 					A_SetWeaponFrame(9);	//A0B1C2D3E4F5G6H7I8J9
 				
-				if(CountInv("LeftDeagleAmmo")>0 && CountInv("DeagleAmmo")<=0)
+				if(CountInv("LeftHellsBellsAmmo")>0 && CountInv("HellsBellsAmmo")<=0)
 					A_TakeInventory("DualFiring",1);
 				int firemodecvar = Cvar.GetCvar("SingleDualFire",player).GetInt();
-				if(CountInv("DualFiring")==1 || (CountInv("DualFiring")==1 && CountInv("LeftDeagleAmmo")<=0))
+				if(CountInv("DualFiring")==1 || (CountInv("DualFiring")==1 && CountInv("LeftHellsBellsAmmo")<=0))
 				{
 					if((PressingFire() || JustPressed(BT_ATTACK)) && !A_IsFiringLeftWeapon() && firemodecvar==0)
 					{
-						if(CountInv("DeagleAmmo") > 0)
+						if(CountInv("HellsBellsAmmo") > 0)
 							return resolvestate("FireRight_Overlay");
 						else 
 						{
@@ -872,7 +876,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 					}
 				}
 				if((PressingAltfire() || JustPressed(BT_ALTATTACK)) && !A_IsFiringRightWeapon() && firemodecvar==1){
-					if(CountInv("DeagleAmmo") > 0)
+					if(CountInv("HellsBellsAmmo") > 0)
 						return resolvestate("FireRight_Overlay");
 					else 
 					{
@@ -881,7 +885,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 					}
 				}
 				if((Pressingfire() || JustPressed(BT_ATTACK)) && !A_IsFiringRightWeapon() && firemodecvar==2){
-					if(CountInv("DeagleAmmo") > 0)
+					if(CountInv("HellsBellsAmmo") > 0)
 						return resolvestate("FireRight_Overlay");
 					else 
 					{
@@ -904,8 +908,8 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				A_StartSound("weapons/deagle/fire", 0, CHANF_OVERLAP, 1.0);
 				A_StartSound("weapons/deagle/afire", 0, CHANF_OVERLAP, 0.70);
 				PB_DynamicTail("shotgun", "pistol_mag");
-				PB_LowAmmoSoundWarning("pistol", "LeftDeagleAmmo");
-				A_Takeinventory("LeftDeagleAmmo",1);
+				PB_LowAmmoSoundWarning("pistol", "LeftHellsBellsAmmo");
+				A_Takeinventory("LeftHellsBellsAmmo",1);
 				A_AlertMonsters();
 				A_ZoomFactor(0.985);
 				PB_WeaponRecoil(-1.92,+1.8);
@@ -916,17 +920,17 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			}
 			D6E1 C 1 {
 				A_SetFiringLeftWeapon(False);
-				if(CountInv("LeftDeagleAmmo")<=0 || CountInv("DeagleAmmo")>0 ){
+				if(CountInv("LeftHellsBellsAmmo")<=0 || CountInv("HellsBellsAmmo")>0 ){
 					A_GiveInventory("DualFiring",1);
 				}
 			}
-			TNT1 A 0 A_jumpif(CountInv("LeftDeagleAmmo") < 1,"EndFireNoAmmoLeft");
+			TNT1 A 0 A_jumpif(CountInv("LeftHellsBellsAmmo") < 1,"EndFireNoAmmoLeft");
 			D6E1 DEFGH 1;
 			D6E1 II 1 {
 				//refire for dual wield
 				int firemodecvar = Cvar.GetCvar("SingleDualFire",player).GetInt();
 				if(JustPressed(BT_ALTATTACK) && !A_IsFiringRightWeapon() && firemodecvar == 2){
-					if(CountInv("LeftDeagleAmmo") > 0)
+					if(CountInv("LeftHellsBellsAmmo") > 0)
 						return resolvestate("FireLeft_Overlay");
 					else 
 					{
@@ -936,7 +940,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				}
 				if(JustPressed(BT_ATTACK) && !A_IsFiringLeftWeapon())
 				{
-					if(CountInv("LeftDeagleAmmo") > 0)
+					if(CountInv("LeftHellsBellsAmmo") > 0)
 					{
 						return resolvestate("FireLeft_Overlay");
 					}
@@ -949,7 +953,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				return resolvestate(Null);
 			}
 			TNT1 A 0 {
-				if(CountInv("LeftDeagleAmmo")<=0)
+				if(CountInv("LeftHellsBellsAmmo")<=0)
 					A_GiveInventory("DualFireReload",1);
 			}
 			Goto IdleLeft_Overlay;
@@ -960,7 +964,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				//refire for dual wield
 				int firemodecvar = Cvar.GetCvar("SingleDualFire",player).GetInt();
 				if(JustPressed(BT_ALTATTACK) && !A_IsFiringRightWeapon() && firemodecvar == 2){
-					if(CountInv("LeftDeagleAmmo") > 0)
+					if(CountInv("LeftHellsBellsAmmo") > 0)
 						return resolvestate("FireLeft_Overlay");
 					else 
 					{
@@ -970,7 +974,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				}
 				if(JustPressed(BT_ATTACK) && !A_IsFiringLeftWeapon())
 				{
-					if(CountInv("LeftDeagleAmmo") > 0)
+					if(CountInv("LeftHellsBellsAmmo") > 0)
 					{
 						return resolvestate("FireLeft_Overlay");
 					}
@@ -983,7 +987,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				return resolvestate(Null);
 			}
 			TNT1 A 0 {
-				if(CountInv("LeftDeagleAmmo")<=0)
+				if(CountInv("LeftHellsBellsAmmo")<=0)
 					A_GiveInventory("DualFireReload",1);
 			}
 			Goto IdleLeft_Overlay;
@@ -1001,7 +1005,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 					PB_DynamicTail("shotgun", "pistol_mag");
 					PB_LowAmmoSoundWarning("pistol");
 					A_ZoomFactor(0.985);
-					A_Takeinventory("DeagleAmmo",1);
+					A_Takeinventory("HellsBellsAmmo",1);
 					A_AlertMonsters();
 					A_SetFiringRightWeapon(True);
 					PB_WeaponRecoil(-1.92,-1.8);
@@ -1012,7 +1016,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				}
 			D6E0 C 1 {
 				A_SetFiringRightWeapon(False);
-				if(CountInv("LeftDeagleAmmo")>0 || CountInv("DeagleAmmo")<=0 ){
+				if(CountInv("LeftHellsBellsAmmo")>0 || CountInv("HellsBellsAmmo")<=0 ){
 					A_TakeInventory("DualFiring",1);
 				}
 			}
@@ -1022,7 +1026,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				//refire for dual wield
 				int firemodecvar = Cvar.GetCvar("SingleDualFire",player).GetInt();
 				if(JustPressed(BT_ATTACK) && !A_IsFiringRightWeapon() && firemodecvar == 2){
-					if(CountInv("DeagleAmmo") > 0)
+					if(CountInv("HellsBellsAmmo") > 0)
 						return resolvestate("FireRight_Overlay");
 					else 
 					{
@@ -1031,7 +1035,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 					}
 				}
 				if(JustPressed(BT_ALTATTACK) && !A_IsFiringRightWeapon() && firemodecvar > 2){
-					if(CountInv("DeagleAmmo") > 0)
+					if(CountInv("HellsBellsAmmo") > 0)
 						return resolvestate("FireRight_Overlay");
 					else 
 					{
@@ -1042,7 +1046,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				return resolvestate(null);
 			}
 			TNT1 A 0 {
-				if(CountInv("DeagleAmmo")<=0)
+				if(CountInv("HellsBellsAmmo")<=0)
 					A_GiveInventory("DualFireReload",1);
 			}
 			Goto IdleRight_Overlay;
@@ -1053,7 +1057,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				//refire for dual wield
 				int firemodecvar = Cvar.GetCvar("SingleDualFire",player).GetInt();
 				if(JustPressed(BT_ATTACK) && !A_IsFiringRightWeapon() && firemodecvar == 2){
-					if(CountInv("DeagleAmmo") > 0)
+					if(CountInv("HellsBellsAmmo") > 0)
 						return resolvestate("FireRight_Overlay");
 					else 
 					{
@@ -1062,7 +1066,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 					}
 				}
 				if(JustPressed(BT_ALTATTACK) && !A_IsFiringRightWeapon() && firemodecvar > 2){
-					if(CountInv("DeagleAmmo") > 0)
+					if(CountInv("HellsBellsAmmo") > 0)
 						return resolvestate("FireRight_Overlay");
 					else 
 					{
@@ -1073,7 +1077,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 				return resolvestate(null);
 			}
 			TNT1 A 0 {
-				if(CountInv("DeagleAmmo")<=0)
+				if(CountInv("HellsBellsAmmo")<=0)
 					A_GiveInventory("DualFireReload",1);
 			}
 			Goto IdleRight_Overlay;
@@ -1202,7 +1206,7 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 	Action void PB_SetDualSpriteIfUnload(string leftuUnl,string rightUnl,string unloaded)
 	{
 		bool rightunloaded = (invoker.ammo2.amount < 1 || findinventory(invoker.unloadertoken));
-		bool leftunloaded = (countinv("LeftDeagleAmmo") < 1);
+		bool leftunloaded = (countinv("LeftHellsBellsAmmo") < 1);
 		if(rightunloaded && leftunloaded)
 		{
 			A_setoverlaysprite(overlayID(),unloaded);
@@ -1220,5 +1224,31 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 			return;
 		}
 		//A_setoverlaysprite(overlayID(),normal);
+	}
+}
+
+Class HellsBellsAmmo : PB_WeaponAmmo
+{
+	default
+	{
+		Inventory.Amount 0;
+		Inventory.MaxAmount 21;
+		Ammo.BackpackAmount 0;
+		Ammo.BackpackMaxAmount 21;
+		+INVENTORY.IGNORESKILL;
+		Inventory.Icon "D4E0Z0";
+	}
+}
+
+Class LeftHellsBellsAmmo : PB_WeaponAmmo
+{
+	default
+	{
+		Inventory.Amount 0;
+		Inventory.MaxAmount 21;
+		Ammo.BackpackAmount 0;
+		Ammo.BackpackMaxAmount 21;
+		+INVENTORY.IGNORESKILL;
+		Inventory.Icon "D4E0Z0";
 	}
 }

@@ -46,3 +46,10 @@ gzdoom -file Project_Brutality-PB_Staging build/pb_overhaul.pk3
 ```
 ./dev_overhaul.sh
 ```
+
+## Controls Note
+- Ensure `Reload` and `Weapon Special` are bound in GZDoom controls for testing reloads and dual wield toggle.
+
+## Commits
+- Group related changes into one commit with a clear, present-tense message.
+- Do not commit Project Brutality sources.
