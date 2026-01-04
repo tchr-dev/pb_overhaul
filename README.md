@@ -22,6 +22,17 @@ Optional environment variables:
 - `GZDOOM_CMD` — path to the GZDoom executable.
 - `PB_PATH` — Project Brutality folder path.
 
+## Current Features
+
+- Project Brutality Overhaul menu with a placeholder screen.
+- Deagle mag size slider (1–20, chamber adds +1).
+
+Menu path:
+
+```
+Options -> Project Brutality Settings -> Project Brutality Overhaul
+```
+
 ## Packaging
 
 The script creates `build/pb_overhaul.pk3` from `pb_overhaul/` and launches:

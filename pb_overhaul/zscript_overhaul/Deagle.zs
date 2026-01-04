@@ -37,8 +37,8 @@ class PB_Overhaul_Deagle : PB_WeaponBase replaces PB_Deagle
 		int mag = cv.GetInt();
 		if (mag < 1)
 			mag = 1;
-		if (mag > 7)
-			mag = 7;
+		if (mag > 20)
+			mag = 20;
 		return mag;
 	}
 
