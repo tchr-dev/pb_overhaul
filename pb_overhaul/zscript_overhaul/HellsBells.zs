@@ -1,4 +1,4 @@
-class PB_HellsBells : PB_WeaponBase
+class PB_HellsBells : PB_WeaponBase replaces PB_Deagle
 {
 	default
 	{

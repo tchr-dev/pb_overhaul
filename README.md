@@ -25,12 +25,19 @@ Optional environment variables:
 ## Current Features
 
 - Project Brutality Overhaul menu with a placeholder screen.
-- Deagle mag size slider (1–20, chamber adds +1).
+- Hell's Bells weapon replaces PB Deagle spawns.
+- Hell's Bells mag size slider (7–20, chamber adds +1).
 
 Menu path:
 
 ```
 Options -> Project Brutality Settings -> Project Brutality Overhaul
+```
+
+Console:
+
+```
+give pb_hellsbells
 ```
 
 ## Packaging

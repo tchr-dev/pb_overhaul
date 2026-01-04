@@ -18,24 +18,14 @@ gzdoom -file Project_Brutality-PB_Staging build/pb_overhaul.pk3
 
 ## ZScript Addon Rules (Avoid Collisions)
 - Do NOT place addon files at the same path as PB includes (e.g. `zscript/Weapons/Slot2/Deagle.zs`), or PB will include the addon file instead and break.
-- Keep addon ZScript in a unique path, e.g. `pb_overhaul/zscript_overhaul/Deagle.zs`.
+- Keep addon ZScript in a unique path, e.g. `pb_overhaul/zscript_overhaul/HellsBells.zs`.
 - Include addon scripts via `pb_overhaul/ZSCRIPT.txt`.
 
-## Deagle Mag Size Implementation (Working)
-- `pb_overhaul/CVARINFO` defines `pb_overhaul_deagle_mag` (default 7).
-- `pb_overhaul/zscript_overhaul/Deagle.zs` replaces `PB_Deagle` with a subclass and updates reload logic to use the cvar.
-- Helper functions used in states must be `action` functions.
-- Cvar access should be guarded:
-  - Use `let p = player;` and `Cvar.GetCvar("pb_overhaul_deagle_mag", p)`.
-  - If `p` or cvar is null, return the default (7).
-- Slider range is 1–20 in `pb_overhaul/MENUDEF.txt`.
-
-## Ammo Max for Larger Mags (DECORATE)
-- Use `pb_overhaul/DECORATE` to replace ammo max for `DeagleAmmo` and `LeftDeagleAmmo`.
-- Replacement classes must have new names:
-  - `ACTOR PB_Overhaul_DeagleAmmo : Ammo replaces DeagleAmmo`
-  - `ACTOR PB_Overhaul_LeftDeagleAmmo : Ammo replaces LeftDeagleAmmo`
-- Do not attempt `replaces` with the same class name.
+## Hell's Bells (PB Deagle Replacement)
+- `PB_HellsBells` replaces `PB_Deagle` so map spawns and `give pb_deagle` yield Hell's Bells.
+- Console give: `give pb_hellsbells`.
+- Uses its own mag ammo classes (`HellsBellsAmmo`, `LeftHellsBellsAmmo`) while consuming `PB_LowCalMag` reserve.
+- Magazine size is controlled by `pb_overhaul_hellsbells_mag` (7–20, chamber adds +1).
 
 ## Common Pitfalls
 - Reusing PB file paths in the addon breaks PB includes and causes ZScript errors.
